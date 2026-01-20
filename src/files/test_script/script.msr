@@ -1,0 +1,8 @@
+global varint x = 200
+global varint y = 150
+
+hotkey F8-> (
+    CursorMove, x, y, 0
+    MouseClick, x, y, 0
+    set x = x + 50
+)

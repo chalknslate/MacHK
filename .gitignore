@@ -22,6 +22,9 @@
 *.la
 *.lo
 
+# Script files
+*.mhk
+
 # Shared objects (inc. Windows DLLs)
 *.dll
 *.so
