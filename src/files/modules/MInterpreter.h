@@ -13,15 +13,13 @@ typedef struct {
     int count;
 } MVarFrame;
 
-// --- globals + locals support ---
 
 static MVarFrame vstack[MAX_STACK];
 static int vsp = -1;
 
-// call this once at startup
 static void init_globals() {
     vsp = 0;
-    vstack[0].count = 0; // frame 0 = globals
+    vstack[0].count = 0; 
 }
 
 static void push_frame() {
@@ -30,12 +28,10 @@ static void push_frame() {
 }
 
 static void pop_frame() {
-    if (vsp > 0) vsp--; // never pop globals
+    if (vsp > 0) vsp--;
 }
 
-// find local first, then global
 static int* find_var(const char *name) {
-    // locals (top -> 1)
     for (int i = vsp; i >= 1; i--) {
         for (int j = 0; j < vstack[i].count; j++) {
             if (strcmp(vstack[i].vars[j].name, name) == 0)
@@ -43,7 +39,6 @@ static int* find_var(const char *name) {
         }
     }
 
-    // globals (frame 0)
     for (int j = 0; j < vstack[0].count; j++) {
         if (strcmp(vstack[0].vars[j].name, name) == 0)
             return &vstack[0].vars[j].value;
@@ -53,16 +48,12 @@ static int* find_var(const char *name) {
 }
 static void print_vars() {
     printf("=== VARIABLES ===\n");
-
-    // globals
     printf("[globals]\n");
     for (int j = 0; j < vstack[0].count; j++) {
         printf("  %s = %d\n",
                vstack[0].vars[j].name,
                vstack[0].vars[j].value);
     }
-
-    // locals (each frame)
     for (int i = 1; i <= vsp; i++) {
         printf("[frame %d]\n", i);
         for (int j = 0; j < vstack[i].count; j++) {
@@ -75,9 +66,7 @@ static void print_vars() {
     printf("=================\n");
 }
 
-// assign: prefer existing local, then existing global, else create local
 static void set_var(const char *name, int value) {
-    // update local if exists
     for (int i = vsp; i >= 1; i--) {
         for (int j = 0; j < vstack[i].count; j++) {
             if (strcmp(vstack[i].vars[j].name, name) == 0) {
@@ -86,16 +75,12 @@ static void set_var(const char *name, int value) {
             }
         }
     }
-
-    // update global if exists
     for (int j = 0; j < vstack[0].count; j++) {
         if (strcmp(vstack[0].vars[j].name, name) == 0) {
             vstack[0].vars[j].value = value;
             return;
         }
     }
-
-    // create new var in current frame (or globals if no locals yet)
     int target = (vsp >= 1) ? vsp : 0;
     MVarFrame *f = &vstack[target];
 
@@ -441,14 +426,14 @@ static void execute_command(MCommand *cmd) {
         }
 
         case MCommandType_CursorMove: {
-            int x = eval_expr(cmd->CursorMove.expr_x); // <- new: store expr as string
+            int x = eval_expr(cmd->CursorMove.expr_x); 
             int y = eval_expr(cmd->CursorMove.expr_y);
             push_node(create_node(MEvent_MouseMove, x, y, cmd->CursorMove.duration));
             break;
         }
 
         case MCommandType_HMouseClick: {
-            int x = eval_expr(cmd->HMouseClick.expr_x); // <- new: store expr as string
+            int x = eval_expr(cmd->HMouseClick.expr_x); 
             int y = eval_expr(cmd->HMouseClick.expr_y);
             //printf("%d, %d\n", x, y);
             push_node(create_node(MEvent_MouseClick, x, y, cmd->HMouseClick.clickType));
@@ -462,7 +447,7 @@ static CGEventRef hotkey_callback(CGEventTapProxy proxy, CGEventType type, CGEve
     if (type != kCGEventKeyDown) return event;
 
      CGKeyCode code = (CGKeyCode)CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
-    //printf("Key pressed code: %u\n", code);  // log every∂key press
+    //printf("Key pressed code: %u\n", code); 
     MScript *script = (MScript*)userInfo;
     //print_script(script);
     for (size_t i = 0; i < script->hotkey_count; i++) {

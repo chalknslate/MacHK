@@ -161,7 +161,6 @@ void process()
                 CGPointMake(node.MouseClick.x, node.MouseClick.y),
                 kCGMouseButtonLeft
             );
-            // Left button up at 250x250
             CGEventRef click1_up = CGEventCreateMouseEvent(
                 NULL, kCGEventLeftMouseUp,
                 CGPointMake(node.MouseClick.x, node.MouseClick.y),

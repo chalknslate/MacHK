@@ -3,17 +3,17 @@
 #include "MQueue.h"
 #include "MInterpreter.h"
 #include <signal.h>
-volatile sig_atomic_t running = 1; // global flag
+volatile sig_atomic_t running = 1; 
 
 void handle_sigint(int sig) {
     printf("\nCaught Ctrl-C (SIGINT), exiting...\n");
-    running = 0; // signal your main loop to stop
+    running = 0; 
 }
 int main() {
     init_globals();
     MFile mf = read_file("/Users/codinggenius/MacHK/src/files/test_script/script.msr");
     MScript script = parse_script(&mf);
-    print_script(&script); // optional debug
+    print_script(&script);
     print_vars();
     CGEventMask mask = CGEventMaskBit(kCGEventKeyDown);
     CFMachPortRef tap = CGEventTapCreate(
